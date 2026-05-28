@@ -467,6 +467,16 @@ https://random-id.ngrok-free.app/app/swagger-ui/index.html
 ```
 
 ---
+# Output Capture
+
+<img width="1501" height="793" alt="Captureb" src="https://github.com/user-attachments/assets/65af83cf-1539-42b6-a07a-596f558dddf1" />
+# Login with user ID password 
+<img width="1535" height="954" alt="Capturec" src="https://github.com/user-attachments/assets/6953dec5-bb77-4857-ae8a-9ce30d87a593" />
+
+# Login with generated token using swagger-UI
+<img width="1500" height="924" alt="Capturea" src="https://github.com/user-attachments/assets/155bf624-15d1-4830-8596-bca376e80cc9" />
+# Getting user after authentication
+<img width="1560" height="941" alt="Captureee" src="https://github.com/user-attachments/assets/3027c0ec-e8fa-48ef-b7ff-39e871fb32ab" />
 
 # Future Improvements
 
