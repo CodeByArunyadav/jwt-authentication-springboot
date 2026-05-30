@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 import org.springframework.stereotype.Component;
@@ -23,64 +23,55 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-	@Autowired
-	private JwtUtil jwtUtil;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-	@Override
-	protected void doFilterInternal(
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
 
-			HttpServletRequest request,
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain filterChain)
+            throws ServletException, IOException {
 
-			HttpServletResponse response,
+        String authHeader =  request.getHeader("Authorization");
+        String token = null;
+        String username = null;
 
-			FilterChain filterChain)
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
-			throws ServletException, IOException {
+            token = authHeader.substring(7);
 
-		// Read Authorization Header
-		String authHeader = request.getHeader("Authorization");
+            try {
+                username =
+                        jwtUtil.extractUsername(token);
+            } catch (Exception e) {
+                System.out.println("Invalid JWT");
+            }
+        }
+        
 
-		String token = null;
+        if (username != null  && SecurityContextHolder
+                .getContext()
+                .getAuthentication() == null) {
 
-		String username = null;
+            UserDetails userDetails = userDetailsService
+                                     .loadUserByUsername(username);
 
-		// Check Bearer Token
-		if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            if (jwtUtil.validateToken(token, userDetails.getUsername())) {
 
-			token = authHeader.substring(7);
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken( userDetails, null, userDetails.getAuthorities());
 
-			try {
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request));
 
-				// Extract Username
-				username = jwtUtil.extractUsername(token);
+                SecurityContextHolder
+                        .getContext()
+                        .setAuthentication(authToken);
+            }
+        }
 
-			} catch (Exception e) {
-
-				System.out.println("Invalid JWT Token");
-			}
-		}
-
-		// Validate Token
-		if (username != null
-
-				&& SecurityContextHolder.getContext().getAuthentication() == null) {
-
-			if (jwtUtil.validateToken(token, username)) {
-
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-
-						username, null, null);
-
-				authToken.setDetails(
-
-						new WebAuthenticationDetailsSource().buildDetails(request));
-
-				// Set Authentication
-				SecurityContextHolder.getContext().setAuthentication(authToken);
-			}
-		}
-
-		// Continue Request
-		filterChain.doFilter(request, response);
-	}
+        filterChain.doFilter(request, response);
+    }
 }
