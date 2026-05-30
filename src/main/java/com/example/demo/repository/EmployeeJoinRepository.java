@@ -18,7 +18,7 @@ public interface EmployeeJoinRepository
 
             e.emp_data->>'department' AS department_name,
 
-            d.location
+            d.location AS department_location
 
         FROM employees e
 

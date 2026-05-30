@@ -24,9 +24,11 @@ public class AuthService {
 	public String register(User user) {
 
 		// Encrypt Password
-		user.setPassword(
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-				passwordEncoder.encode(user.getPassword()));
+		if (user.getRole() == null) {
+			user.setRole("USER");
+		}
 
 		userRepository.save(user);
 

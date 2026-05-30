@@ -6,6 +6,7 @@ import com.example.demo.service.EmployeeJoinService;
 import com.example.demo.service.EmployeeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class EmployeeController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Employee> getAll() {
         return service.getAll();
     }
@@ -54,6 +56,7 @@ public class EmployeeController {
     }
     
     @GetMapping("/department-details")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<EmployeeDepartmentDTO>
     getEmployeeDepartmentDetails() {
 
