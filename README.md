@@ -483,6 +483,37 @@ https://random-id.ngrok-free.app/app/swagger-ui/index.html
 
 <img width="1560" height="941" alt="Captureee" src="https://github.com/user-attachments/assets/3027c0ec-e8fa-48ef-b7ff-39e871fb32ab" />
 
+# global exceptional handling Flow
+Request
+   ↓
+JwtAuthFilter
+   ↓
+Invalid Token?
+   ├─ YES → 401
+   └─ NO
+        ↓
+Authorization Check
+        ↓
+Access Denied?
+        ├─ YES → 403
+        └─ NO
+             ↓
+Controller
+             ↓
+Service
+             ↓
+Repository
+             ↓
+Record Found?
+             ├─ YES → 200 OK
+             └─ NO
+                  ↓
+ResourceNotFoundException
+                  ↓
+GlobalExceptionHandler
+                  ↓
+404 Not Found
+
 # Future Improvements
 
 * Refresh Tokens
