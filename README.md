@@ -538,7 +538,7 @@ GlobalExceptionHandler
 # Future Improvements
 
 * Refresh Tokens
-* Role-based Authorization
+* ~~Role-based Authorization~~ : Done 👍
 * OAuth2 Integration
 * API Gateway Integration
 * Redis Token Blacklist
