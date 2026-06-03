@@ -1,7 +1,12 @@
 package com.example.demo.config;
 
+import com.example.demo.security.JwtAccessDeniedHandler;
 import com.example.demo.security.JwtAuthFilter;
+import com.example.demo.security.JwtAuthenticationEntryPoint;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +25,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
 	private final JwtAuthFilter jwtAuthFilter;
+	@Autowired
+	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	@Autowired
+	private JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -27,6 +37,8 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+					                  	   .accessDeniedHandler(jwtAccessDeniedHandler))
 
 				.authorizeHttpRequests(auth -> auth
 
@@ -47,14 +59,12 @@ public class SecurityConfig {
 
 		return http.build();
 	}
-	
-	 @Bean
-	    public AuthenticationManager authenticationManager(
-	            AuthenticationConfiguration config)
-	            throws Exception {
 
-	        return config.getAuthenticationManager();
-	    }
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+
+		return config.getAuthenticationManager();
+	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
