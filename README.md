@@ -484,18 +484,21 @@ https://random-id.ngrok-free.app/app/swagger-ui/index.html
 <img width="1560" height="941" alt="Captureee" src="https://github.com/user-attachments/assets/3027c0ec-e8fa-48ef-b7ff-39e871fb32ab" />
 
 # global exceptional handling Flow
+## Exception Handling Flow
+
+```text
 Request
    ↓
 JwtAuthFilter
    ↓
 Invalid Token?
-   ├─ YES → 401
+   ├─ YES → 401 Unauthorized
    └─ NO
         ↓
 Authorization Check
         ↓
 Access Denied?
-        ├─ YES → 403
+        ├─ YES → 403 Forbidden
         └─ NO
              ↓
 Controller
@@ -513,6 +516,24 @@ ResourceNotFoundException
 GlobalExceptionHandler
                   ↓
 404 Not Found
+```
+
+### Responsibilities
+
+| Component                 | Responsibility                 |
+| ------------------------- | ------------------------------ |
+| JwtAuthFilter             | JWT Validation                 |
+| AuthenticationEntryPoint  | Handles 401 Unauthorized       |
+| AccessDeniedHandler       | Handles 403 Forbidden          |
+| Controller                | Receives Request               |
+| Service                   | Business Logic                 |
+| Repository                | Database Access                |
+| GlobalExceptionHandler    | Handles Application Exceptions |
+| ResourceNotFoundException | Returns 404 Not Found          |
+
+```
+```
+
 
 # Future Improvements
 
