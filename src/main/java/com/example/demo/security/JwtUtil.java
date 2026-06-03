@@ -1,15 +1,18 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-
-import org.springframework.stereotype.Component;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import java.util.Date;
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
@@ -17,33 +20,31 @@ public class JwtUtil {
     private static final String SECRET_KEY =
             "mySuperSecretKeyForJwtAuthentication123456";
 
-    private final SecretKey key =
-            Keys.hmacShaKeyFor(
-                    SECRET_KEY.getBytes()
-            );
+    private Key getSigningKey() {
 
-    // Generate Token
+        return Keys.hmacShaKeyFor(
+                SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    }
+
+    // Generate JWT Token
     public String generateToken(
-            String username) {
+            String username,
+            String role) {
+
+        Map<String, Object> claims =
+                new HashMap<>();
+
+        claims.put("role", role);
 
         return Jwts.builder()
-
+                .claims(claims)
                 .subject(username)
-
                 .issuedAt(new Date())
-
                 .expiration(
                         new Date(
                                 System.currentTimeMillis()
-                                + 86400000
-                        )
-                )
-
-                .signWith(
-                        key,
-                        SignatureAlgorithm.HS256
-                )
-
+                                        + 1000 * 60 * 60))
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -51,8 +52,16 @@ public class JwtUtil {
     public String extractUsername(
             String token) {
 
-        return getClaims(token)
+        return extractAllClaims(token)
                 .getSubject();
+    }
+
+    // Extract Role
+    public String extractRole(
+            String token) {
+
+        return extractAllClaims(token)
+                .get("role", String.class);
     }
 
     // Validate Token
@@ -60,45 +69,31 @@ public class JwtUtil {
             String token,
             String username) {
 
-        try {
+        String extractedUsername =
+                extractUsername(token);
 
-            String extractedUsername =
-                    extractUsername(token);
-
-            return extractedUsername
-                    .equals(username)
-
-                    && !isTokenExpired(token);
-
-        } catch (Exception e) {
-
-            return false;
-        }
+        return extractedUsername.equals(username)
+                && !isTokenExpired(token);
     }
 
-    // Check Expiration
+    // Check Expiry
     private boolean isTokenExpired(
             String token) {
 
-        return getClaims(token)
-
+        return extractAllClaims(token)
                 .getExpiration()
-
                 .before(new Date());
     }
 
-    // Read Claims
-    private Claims getClaims(
+    // Extract Claims
+    private Claims extractAllClaims(
             String token) {
 
         return Jwts.parser()
-
-                .verifyWith(key)
-
+                .verifyWith(
+                        (SecretKey) getSigningKey())
                 .build()
-
                 .parseSignedClaims(token)
-
                 .getPayload();
     }
 }

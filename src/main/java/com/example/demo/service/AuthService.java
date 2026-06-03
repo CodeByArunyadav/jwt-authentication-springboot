@@ -42,10 +42,10 @@ public class AuthService {
 
 	public String login(String username, String password) {
 
-		authenticationManager.authenticate(
+		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+		
+		User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User Not Found"));
 
-				new UsernamePasswordAuthenticationToken(username, password));
-
-		return jwtUtil.generateToken(username);
+		return jwtUtil.generateToken(user.getUsername(),user.getRole());
 	}
 }
