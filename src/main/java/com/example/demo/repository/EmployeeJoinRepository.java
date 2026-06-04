@@ -7,28 +7,27 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface EmployeeJoinRepository
-        extends JpaRepository<Employee, Long> {
+public interface EmployeeJoinRepository extends JpaRepository<Employee, Long> {
 
-    @Query(value = """
+	@Query(value = """
 
-        SELECT
+			SELECT
 
-            e.emp_data->>'name' AS employee_name,
+			    e.emp_data->>'name' AS employee_name,
 
-            e.emp_data->>'department' AS department_name,
+			    e.emp_data->>'department' AS department_name,
 
-            d.location AS department_location
+			    d.department_location AS department_location
 
-        FROM employees e
+			FROM employees e
 
-        JOIN departments d
+			JOIN departments d
 
-        ON e.emp_data->>'department' = d.dept_name
+			ON e.emp_data->>'department' = d.dept_name
 
-        """,
+			""",
 
-        nativeQuery = true)
+			nativeQuery = true)
 
-    List<Object[]> getEmployeeDepartmentDetails();
+	List<Object[]> getEmployeeDepartmentDetails();
 }
