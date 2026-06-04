@@ -1,14 +1,15 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.security.JwtUtil;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.DTO.AuthResponseDTO;
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.security.JwtUtil;
 
 @Service
 public class AuthService {
@@ -25,10 +26,9 @@ public class AuthService {
 	@Autowired
 	private JwtUtil jwtUtil;
 
-	// Register User
+// Register User
 	public String register(User user) {
 
-		// Encrypt Password
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 		if (user.getRole() == null) {
@@ -40,12 +40,35 @@ public class AuthService {
 		return "User Registered Successfully";
 	}
 
-	public String login(String username, String password) {
+// Login
+	public AuthResponseDTO login(String username, String password) {
 
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-		
+
 		User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User Not Found"));
 
-		return jwtUtil.generateToken(user.getUsername(),user.getRole());
+		String accessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getRole());
+
+		String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
+
+		return new AuthResponseDTO(accessToken, refreshToken);
 	}
+
+// Refresh Access Token
+	public AuthResponseDTO refreshToken(String refreshToken) {
+
+		if (!jwtUtil.validateRefreshToken(refreshToken)) {
+
+			throw new RuntimeException("Invalid Refresh Token");
+		}
+
+		String username = jwtUtil.extractUsername(refreshToken);
+
+		User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User Not Found"));
+
+		String newAccessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getRole());
+
+		return new AuthResponseDTO(newAccessToken, refreshToken);
+	}
+
 }
