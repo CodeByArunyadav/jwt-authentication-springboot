@@ -53,7 +53,7 @@ public class OpenApiConfig {
                                 .description("Local Development Server"),
 
                         new Server()
-                                .url("https://dev.hoxcloud.com")
+                                .url("https://carmelo-hyaenic-leda.ngrok-free.dev/app")
                                 .description("Development Server"),
 
                         new Server()
