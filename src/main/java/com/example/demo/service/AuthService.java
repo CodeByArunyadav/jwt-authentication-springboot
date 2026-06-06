@@ -62,18 +62,67 @@ public class AuthService {
 
 		String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
 
+		RefreshToken token = new RefreshToken();
+
+		token.setUsername(username);
+
+		token.setTokenHash(fingerprintUtil.hashRefreshToken(refreshToken));
+
+		token.setUserAgentHash(fingerprintUtil.hashUserAgent(userAgent));
+
+		token.setLanguageHash(fingerprintUtil.hashLanguage(language));
+
+		token.setTimezoneHash(fingerprintUtil.hashTimezone(timezone));
+
+		token.setRevoked(false);
+
+		token.setExpiryDate(LocalDateTime.now().plusDays(7));
+
+		refreshTokenRepository.save(token);
+
 		return new AuthResponseDTO(accessToken, refreshToken);
 	}
 
-// Refresh Access Token
-	public AuthResponseDTO refreshToken(String refreshToken) {
+	// Refresh Access Token
+	public AuthResponseDTO refreshToken(String refreshToken, String userAgent, String language, String timezone) {
 
-		if (!jwtUtil.validateRefreshToken(refreshToken)) {
+		String refreshTokenHash = fingerprintUtil.hashRefreshToken(refreshToken);
 
-			throw new RuntimeException("Invalid Refresh Token");
+		RefreshToken dbToken = refreshTokenRepository.findByTokenHash(refreshTokenHash)
+				.orElseThrow(() -> new RuntimeException("Invalid Refresh Token"));
+
+		if (dbToken.isRevoked()) {
+
+			throw new RuntimeException("Refresh Token Revoked");
 		}
 
-		String username = jwtUtil.extractUsername(refreshToken);
+		if (dbToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+
+			dbToken.setRevoked(true);
+
+			refreshTokenRepository.save(dbToken);
+
+			throw new RuntimeException("Refresh Token Expired");
+		}
+
+		boolean fingerprintValid = fingerprintUtil.isFingerprintValid(
+
+				dbToken.getUserAgentHash(), fingerprintUtil.hashUserAgent(userAgent),
+
+				dbToken.getLanguageHash(), fingerprintUtil.hashLanguage(language),
+
+				dbToken.getTimezoneHash(), fingerprintUtil.hashTimezone(timezone));
+
+		if (!fingerprintValid) {
+
+			dbToken.setRevoked(true);
+
+			refreshTokenRepository.save(dbToken);
+
+			throw new RuntimeException("Browser Fingerprint Validation Failed. Please Login Again.");
+		}
+
+		String username = dbToken.getUsername();
 
 		User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User Not Found"));
 
