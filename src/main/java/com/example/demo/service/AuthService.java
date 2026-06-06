@@ -131,4 +131,18 @@ public class AuthService {
 		return new AuthResponseDTO(newAccessToken, refreshToken);
 	}
 
+	// Logout
+	public String logout(String refreshToken) {
+
+		String refreshTokenHash = fingerprintUtil.hashRefreshToken(refreshToken);
+
+		RefreshToken token = refreshTokenRepository.findByTokenHash(refreshTokenHash)
+				.orElseThrow(() -> new RuntimeException("Invalid Refresh Token"));
+
+		token.setRevoked(true);
+
+		refreshTokenRepository.save(token);
+
+		return "Logged Out Successfully";
+	}
 }
