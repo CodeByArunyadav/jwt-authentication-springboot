@@ -518,18 +518,232 @@ GlobalExceptionHandler
 404 Not Found
 ```
 
-### Responsibilities
+You should update your README to reflect the **Refresh Token + Browser Fingerprint implementation** and mark it as completed in Future Improvements.
 
-| Component                 | Responsibility                 |
-| ------------------------- | ------------------------------ |
-| JwtAuthFilter             | JWT Validation                 |
-| AuthenticationEntryPoint  | Handles 401 Unauthorized       |
-| AccessDeniedHandler       | Handles 403 Forbidden          |
-| Controller                | Receives Request               |
-| Service                   | Business Logic                 |
-| Repository                | Database Access                |
-| GlobalExceptionHandler    | Handles Application Exceptions |
-| ResourceNotFoundException | Returns 404 Not Found          |
+Here's a section you can add **after "JWT Authentication Flow"** and before "API Endpoints":
+
+# Refresh Token & Browser Fingerprint Security
+
+## Overview
+
+This project implements a secure refresh token mechanism with browser fingerprint validation and token revocation.
+
+### Features
+
+* Access Token (15 Minutes)
+* Refresh Token (7 Days)
+* Refresh Token Persistence in PostgreSQL
+* Refresh Token Revocation
+* Browser Fingerprint Validation
+* Logout Support
+* Hashed Refresh Token Storage
+* Hashed Fingerprint Storage
+
+---
+
+## Browser Fingerprint Components
+
+The refresh token is bound to the browser fingerprint.
+
+| Component       | Weight |
+| --------------- | ------ |
+| User-Agent      | 1      |
+| Accept-Language | 1      |
+| Time Zone       | 2      |
+
+### Fingerprint Validation Rules
+
+```text
+Score >= 3
+    Allow Refresh
+
+Score < 3
+    Revoke Refresh Token
+    Force Login
+```
+
+### Examples
+
+| User-Agent | Language | Time Zone | Score | Result |
+| ---------- | -------- | --------- | ----- | ------ |
+| ✓          | ✓        | ✓         | 4     | Allow  |
+| ✓          | ✗        | ✓         | 3     | Allow  |
+| ✗          | ✓        | ✓         | 3     | Allow  |
+| ✓          | ✓        | ✗         | 2     | Revoke |
+| ✗          | ✗        | ✓         | 2     | Revoke |
+| ✓          | ✗        | ✗         | 1     | Revoke |
+
+---
+
+## Refresh Token Database Schema
+
+```sql
+CREATE TABLE refresh_tokens (
+
+    id BIGSERIAL PRIMARY KEY,
+
+    token_hash VARCHAR(500) UNIQUE NOT NULL,
+
+    username VARCHAR(255) NOT NULL,
+
+    user_agent_hash VARCHAR(500) NOT NULL,
+
+    language_hash VARCHAR(500) NOT NULL,
+
+    timezone_hash VARCHAR(500) NOT NULL,
+
+    revoked BOOLEAN NOT NULL,
+
+    expiry_date TIMESTAMP NOT NULL
+);
+```
+
+---
+
+## Login Flow
+
+```text
+Client Login
+      ↓
+Authenticate User
+      ↓
+Generate Access Token
+      ↓
+Generate Refresh Token
+      ↓
+Hash Refresh Token
+      ↓
+Hash Browser Fingerprint
+      ↓
+Store In Database
+      ↓
+Return Tokens
+```
+
+---
+
+## Refresh Flow
+
+```text
+Refresh Request
+      ↓
+Validate Refresh JWT
+      ↓
+Lookup Refresh Token Hash
+      ↓
+Check Revoked Status
+      ↓
+Check Expiry Date
+      ↓
+Validate Browser Fingerprint
+      ↓
+Score >= 3 ?
+      ↓
+YES → Generate New Access Token
+
+NO
+ ↓
+Revoke Refresh Token
+ ↓
+401 Unauthorized
+ ↓
+Login Required
+```
+
+---
+
+## Logout Flow
+
+```text
+Login
+   ↓
+Access Token A
+Refresh Token R
+   ↓
+Logout
+   ↓
+Revoke R in Database
+   ↓
+R Cannot Be Used Again
+```
+
+---
+
+## Browser Time Zone Header
+
+The browser timezone is supplied using a custom header:
+
+```http
+X-Timezone: Asia/Kolkata
+```
+
+JavaScript Example:
+
+```javascript
+const timezone =
+    Intl.DateTimeFormat()
+        .resolvedOptions()
+        .timeZone;
+```
+
+Examples:
+
+```text
+Asia/Kolkata
+Europe/London
+America/New_York
+```
+
+---
+
+## Security Benefits
+
+* Refresh tokens can be revoked immediately.
+* Stolen refresh tokens cannot be reused from a different browser fingerprint.
+* Refresh tokens are stored as SHA-256 hashes.
+* Browser fingerprint data is stored as SHA-256 hashes.
+* Logout immediately invalidates refresh token usage.
+* Suitable for microservice authentication architectures.
+
+```
+```
+
+Also update your **Future Improvements** section:
+
+```md
+# Future Improvements
+
+* ~~Refresh Tokens~~ : Done 👍
+* ~~Browser Fingerprint Validation~~ : Done 👍
+* ~~Refresh Token Revocation~~ : Done 👍
+* OAuth2 Integration
+* API Gateway Integration
+* Redis Token Blacklist
+* Docker Support
+* Kubernetes Deployment
+* Rate Limiting
+* Audit Logging
+* Refresh Token Rotation
+* Multi-Device Session Management
+```
+
+And update the **Features** section near the top:
+
+```md
+## Authentication & Security
+
+* JWT-based Authentication
+* Access Token (15 Minutes)
+* Refresh Token (7 Days)
+* Refresh Token Revocation
+* Browser Fingerprint Validation
+* BCrypt Password Encryption
+* Role-based Authorization
+* PostgreSQL Integration
+* Swagger/OpenAPI Integration
+* Stateless Access Token Architecture
+```
+
 
 ```
 ```
