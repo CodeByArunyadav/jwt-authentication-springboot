@@ -40,27 +40,36 @@ src/main/java
 │
 ├── controller
 │   ├── AuthController.java
-│   └── EmployeeController.java
+│   └── AdminController.java
+|   └── UserController.java
 │
 ├── dto
-│   └── EmployeeDepartmentDTO.java
+│   └── AuthResponseDTO.java
+|   └── RefreshRequest.java
 │
 ├── entity
 │   ├── User.java
-│   ├── Employee.java
-│   └── Department.java
+│   ├── RefereshToken.java
 │
 ├── repository
 │   ├── UserRepository.java
-│   └── EmployeeRepository.java
+│   └── RefereshTokenRepository.java
 │
 ├── security
 │   ├── JwtAuthFilter.java
 │   └── JwtUtil.java
+|   └── CustomerUserDetailsService.java
+|   └── FingerprintUtil.java
+|   └── JwtAuthenticationHandler.java
+|   └── JwtAcessDenialHandler.java
 │
+├── Eexception
+│   ├── ErrorResponse.java
+│   └── GlobalExceptionHandler.java
+|   └── ResourcesNotFoundException.java
+|
 ├── service
 │   ├── AuthService.java
-│   └── EmployeeService.java
 │
 └── DemoApplication.java
 ```
