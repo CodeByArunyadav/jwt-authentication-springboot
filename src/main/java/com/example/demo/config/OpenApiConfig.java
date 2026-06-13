@@ -49,7 +49,7 @@ public class OpenApiConfig {
                 .servers(List.of(
 
                         new Server()
-                                .url("http://localhost:8080/app")
+                                .url("http://localhost:8089/app")
                                 .description("Local Development Server"),
 
                         new Server()
