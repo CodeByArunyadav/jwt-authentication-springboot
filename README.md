@@ -202,20 +202,28 @@ VALUES
 # application.properties
 
 ```properties
-spring.application.name=demo
-
-server.port=8080
+spring.application.name=JWT-AUTHENTICATION
+# Server Port
+server.port=8089
 server.servlet.context-path=/app
+eureka.client.service-url.defaultZone=${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+eureka.client.enabled=true
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
 
-spring.datasource.url=jdbc:postgresql://localhost:5432/companydb
-spring.datasource.username=postgres
-spring.datasource.password=postgres
+jwt.secret=${JWT_SECRET}
+# PostgreSQL Database Configuration
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
 
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
+# PostgreSQL Driver
+spring.datasource.driver-class-name=org.postgresql.Driver
 
-springdoc.swagger-ui.path=/swagger-ui.html
+# JPA / Hibernate Configuration
+spring.jpa.hibernate.ddl-auto=update 
+spring.sql.init.mode=never
+
 ```
 
 ---
