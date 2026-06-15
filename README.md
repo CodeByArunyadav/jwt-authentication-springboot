@@ -485,21 +485,21 @@ https://random-id.ngrok-free.app/app/swagger-ui/index.html
 
 ---
 # Output Capture
-<img width="1479" height="789" alt="Untitled67" src="https://github.com/user-attachments/assets/83d83ca1-1c86-40cc-9fee-bd914059afff" />
+<img width="1556" height="875" alt="Capturem2" src="https://github.com/user-attachments/assets/eb3fdf62-d619-4128-8400-5d52d3c4f01a" />
 
 <img width="1435" height="805" alt="Capturem66" src="https://github.com/user-attachments/assets/3ca74e9a-92e4-4e5f-af57-0ec0c5e88eab" />
 
+<img width="1455" height="954" alt="Capture69" src="https://github.com/user-attachments/assets/b23028cc-0daa-4b51-8406-a2484d9255d6" />
+
+<img width="1479" height="789" alt="Untitled67" src="https://github.com/user-attachments/assets/83d83ca1-1c86-40cc-9fee-bd914059afff" />
+
 <img width="1512" height="901" alt="m4" src="https://github.com/user-attachments/assets/a885b45c-0ba8-47cc-b58d-3cfacaae2d5e" />
 
-<img width="1556" height="875" alt="Capturem2" src="https://github.com/user-attachments/assets/eb3fdf62-d619-4128-8400-5d52d3c4f01a" />
-
 <img width="1603" height="804" alt="Capturem1" src="https://github.com/user-attachments/assets/e80ed41c-8ef5-4368-8e9a-b54fbb82f2c6" />
-
 
 <img width="1293" height="750" alt="Capturesfdsf" src="https://github.com/user-attachments/assets/873b5415-de4e-4987-876b-f15120fba254" />
 
 
-<img width="1455" height="954" alt="Capture69" src="https://github.com/user-attachments/assets/b23028cc-0daa-4b51-8406-a2484d9255d6" />
 
 # global exceptional handling Flow
 ## Exception Handling Flow
