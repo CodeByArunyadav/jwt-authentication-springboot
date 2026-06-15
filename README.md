@@ -730,17 +730,17 @@ Also update your **Future Improvements** section:
 ```md
 # Future Improvements
 
-* ~~Refresh Tokens~~ : Done 👍
-* ~~Browser Fingerprint Validation~~ : Done 👍
-* ~~Refresh Token Revocation~~ : Done 👍
+* Refresh Tokens : Done 👍
+* Browser Fingerprint Validation : Done 👍
+* Refresh Token Revocation : Done 👍
 * OAuth2 Integration
-* API Gateway Integration
+* API Gateway Integration : Done 👍
 * Redis Token Blacklist
-* Docker Support
+* Docker Support  : Done 👍
 * Kubernetes Deployment
 * Rate Limiting
 * Audit Logging
-* Refresh Token Rotation
+* Refresh Token Rotation : Done 👍
 * Multi-Device Session Management
 ```
 
@@ -768,12 +768,12 @@ And update the **Features** section near the top:
 
 # Future Improvements
 
-* Refresh Tokens
+* ~~Refresh Tokens~~ : Done 👍
 * ~~Role-based Authorization~~ : Done 👍
 * OAuth2 Integration
-* API Gateway Integration
+* ~~API Gateway Integration~~ : Done 👍
 * Redis Token Blacklist
-* Docker Support
+* ~~Docker Support~~ : Done 👍
 * Kubernetes Deployment
 * Rate Limiting
 * Audit Logging
