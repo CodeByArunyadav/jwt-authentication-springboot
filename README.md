@@ -2,7 +2,7 @@
 
 A complete Spring Boot 3 + Spring Security + JWT Authentication project using PostgreSQL.
 
-https://hub.docker.com/repositories/codebyarunyadav
+https://hub.docker.com/u/codebyarunyadav
 #
 https://www.hoxcloud.in/
 
