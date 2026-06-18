@@ -26,22 +26,15 @@ public class OpenApiConfig {
 
                 // API Information
                 .info(new Info()
-                        .title("Employee Department Management API")
+                        .title("JWT Authentication Management API Service")
                         .version("1.0.0")
-                        .description(
-                                "REST APIs for managing employees and departments "
-                              + "using Spring Boot 3 and PostgreSQL."
+                        .description( "REST APIs for managing employees and departments " + "using Spring Boot 3 and PostgreSQL."
                         )
 
-                        .contact(new Contact()
-                                .name("HoxCloud Development Team")
-                                .email("support@hoxcloud.com")
-                                .url("https://hoxcloud.com")
+                        .contact(new Contact().name("HoxCloud Development Team").email("support@hoxcloud.in").url("https://hoxcloud.in")
                         )
 
-                        .license(new License()
-                                .name("Apache 2.0")
-                                .url("https://www.apache.org/licenses/LICENSE-2.0")
+                        .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0")
                         )
                 )
 
