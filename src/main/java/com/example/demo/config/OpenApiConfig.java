@@ -1,4 +1,4 @@
-package com.example.demo.config; 
+package com.example.demo.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -18,12 +18,49 @@ import java.util.List;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI employeeManagementOpenAPI() {
+    public OpenAPI jwtAuthenticationOpenAPI() {
 
         final String securitySchemeName = "bearerAuth";
 
         return new OpenAPI()
+                .info(new Info()
+                        .title("JWT Authentication API")
+                        .version("1.0.0")
+                        .description("REST APIs for login, registration, JWT token generation, refresh token, and authentication management.")
+                        .contact(new Contact()
+                                .name("HoxCloud Development Team")
+                                .email("support@hoxcloud.com")
+                                .url("https://hoxcloud.in"))
+                        .license(new License()
+                                .name("Apache 2.0")
+                                .url("https://www.apache.org/licenses/LICENSE-2.0")))
 
+                .servers(List.of(
+                        new Server()
+                                .url("http://localhost:8080/jwt-authentication/app")
+                                .description("Local API Gateway"),
+                        new Server()
+                                .url("http://172.26.234.58:8080/jwt-authentication/app")
+                                .description("Docker API Gateway"),
+                        new Server()
+                                .url("http://localhost:8089/app")
+                                .description("Direct JWT Auth Service")
+                ))
+
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+
+                .components(new Components()
+                        .addSecuritySchemes(securitySchemeName,
+                                new SecurityScheme()
+                                        .name(securitySchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                                        .description(
+                                                "Enter JWT token in format: Bearer <token>")));
+    }
+}
+/*
                 // API Information
                 .info(new Info()
                         .title("JWT Authentication Management API Service")
@@ -42,7 +79,7 @@ public class OpenApiConfig {
                 .servers(List.of(
 
                         new Server()
-                                .url("http://localhost:8089/app")
+                                .url("http://localhost:8080/jwt-authentication")
                                 .description("Local Development Server"),
 
                         new Server()
@@ -76,5 +113,4 @@ public class OpenApiConfig {
                                                 )
                                 )
                 );
-    }
-}
+    }*/
