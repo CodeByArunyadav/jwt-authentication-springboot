@@ -24,50 +24,78 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final JwtAuthFilter jwtAuthFilter;
-	@Autowired
-	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	@Autowired
-	private JwtAccessDeniedHandler jwtAccessDeniedHandler;
-	
+    private final JwtAuthFilter jwtAuthFilter;
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-		http.csrf(csrf -> csrf.disable())
+    @Autowired
+    private JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
-					                  	   .accessDeniedHandler(jwtAccessDeniedHandler))
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-				.authorizeHttpRequests(auth -> auth
+        http
+            .csrf(csrf -> csrf.disable())
 
-						// Public APIs
-						.requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
-						.permitAll()
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
 
-						// Admin APIs
-						.requestMatchers("/admin/**").hasRole("ADMIN")
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+            )
 
-						// User APIs
-						.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+            .authorizeHttpRequests(auth -> auth
 
-						// Any authenticated user
-						.anyRequest().authenticated())
+                // Public Auth APIs
+                .requestMatchers(
+                    "/auth/**",
+                    "/app/auth/**",
 
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                    // Swagger / OpenAPI
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/v3/api-docs/**",
+                    "/v3/api-docs",
+                    "/webjars/**",
 
-		return http.build();
-	}
+                    // Gateway forwarded Swagger paths
+                    "/app/swagger-ui/**",
+                    "/app/swagger-ui.html",
+                    "/app/v3/api-docs/**",
+                    "/app/v3/api-docs",
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+                    // Actuator optional
+                    "/actuator/**"
+                ).permitAll()
 
-		return config.getAuthenticationManager();
-	}
+                // Admin APIs
+                .requestMatchers("/admin/**", "/app/admin/**")
+                .hasRole("ADMIN")
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+                // User APIs
+                .requestMatchers("/user/**", "/app/user/**")
+                .hasAnyRole("USER", "ADMIN")
+
+                // Any other request must be authenticated
+                .anyRequest().authenticated()
+            )
+
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
